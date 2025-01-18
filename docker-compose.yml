@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/app
+    environment:
+      - ENV=production
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextjs_app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    restart: always
