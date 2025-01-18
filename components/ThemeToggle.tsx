@@ -1,8 +1,7 @@
 'use client'
 
-import React from 'react'
-import { Sun, Moon } from 'lucide-react'
-import { useTheme } from '../contexts/ThemeContext'
+import { Moon, Sun } from 'lucide-react'
+import { useTheme } from '../app/contexts/ThemeContext'
 
 export function ThemeToggle() {
   const { isDarkMode, toggleDarkMode } = useTheme()
