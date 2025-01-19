@@ -1,9 +1,9 @@
 'use client'
 
-import SkeletonUI from '@/components/SkeletonUI'
+import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Suspense, useEffect, useState } from 'react'
-import AnalysisResultsList from '../../components/AnalysisResultsList'
+import AnalysisResultsList from '../components/AnalysisResultsList'
+import SkeletonUI from '@/components/SkeletonUI'
 
 function SearchResults() {
   const [loading, setLoading] = useState(true)
