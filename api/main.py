@@ -9,7 +9,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://analysis-file-neltias-projects.vercel.app/"
+        "https://analysis-file-neltias-projects.vercel.app/",
+        "https://dev-bloguide.vercel.app",
+        "https://bloguide.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
