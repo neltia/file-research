@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 import { ThemeToggle } from './ThemeToggle'
 
 export function Navigation() {
@@ -13,8 +13,8 @@ export function Navigation() {
             </Link>
           </div>
           <div className="flex items-center">
-            <Link 
-              href="/search-results" 
+            <Link
+              href="/search-results"
               className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
             >
               최신 분석 결과

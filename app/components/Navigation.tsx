@@ -21,6 +21,9 @@ export function Navigation() {
                 height={64}
               />
             </Link>
+            <Link href="/" className="text-xl font-semibold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-200">
+              Bloguide Demo
+            </Link>
           </div>
           <div className="flex items-center">
             <Link
