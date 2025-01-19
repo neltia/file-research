@@ -3,7 +3,7 @@ uvicorn==0.34.0
 python-multipart==0.0.20
 
 sqlalchemy==2.0.37
-psycopg2==2.9.10
+psycopg2-binary==2.9.10
 asyncpg==0.30.0
 
 pillow==11.1.0
