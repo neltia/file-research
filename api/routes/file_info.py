@@ -1,14 +1,23 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from db import get_db
-from services.file_service import get_file_by_sha256
+from services import file_service
 
 router = APIRouter()
 
 
+@router.get("/file/list")
+async def get_file_list(
+    include_private: bool = Query(False, description="Set to true to include private files"),
+    db: AsyncSession = Depends(get_db)
+):
+    files = await file_service.get_file_list(db, include_private)
+    return files
+
+
 @router.get("/file/{sha256}")
 async def get_file_info(sha256: str, db: AsyncSession = Depends(get_db)):
-    file = await get_file_by_sha256(db, sha256)
+    file = await file_service.get_file_by_sha256(db, sha256)
     if not file:
         raise HTTPException(status_code=404, detail="File not found")
 
