@@ -2,6 +2,7 @@
 
 import AnalysisResult from '@/components/AnalysisResult'
 import SkeletonUI from '@/components/SkeletonUI'
+import { server } from '@/config'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -20,7 +21,7 @@ export default function AnalysisPage() {
   useEffect(() => {
     const fetchResult = async () => {
       try {
-        const response = await fetch(`/api/analysis-result/${id}`)
+        const response = await fetch(`${server}/api/analysis-result/${id}`)
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }

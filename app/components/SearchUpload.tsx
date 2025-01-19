@@ -1,5 +1,6 @@
 'use client'
 
+import { server } from '@/config'
 import { Search, Send, Upload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -26,7 +27,7 @@ export default function SearchUpload() {
     if (query && !file) {
       try {
         console.log('Initiating search with query:', query);
-        const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`, {
+        const response = await fetch(`${server}/api/search?query=${encodeURIComponent(query)}`, {
           method: 'GET',
         });
         if (!response.ok) {
@@ -48,9 +49,9 @@ export default function SearchUpload() {
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('isPublic', isPublic.toString());
+      formData.append('is_public', isPublic.toString());
       try {
-        const response = await fetch('/api/upload', {
+        const response = await fetch(`${server}/api/upload`, {
           method: 'POST',
           body: formData,
         });
@@ -80,8 +81,8 @@ export default function SearchUpload() {
             placeholder="Search or upload a file..."
           />
           <div className="flex items-center">
-            <label className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 p-3 transition-colors duration-200">
-              <Upload className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+            <label className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 p-2 transition-colors duration-200">
+              <Upload className="h-6 w-6 text-gray-400 dark:text-gray-500" />
               <input
                 type="file"
                 onChange={handleFileChange}
@@ -89,8 +90,8 @@ export default function SearchUpload() {
               />
             </label>
             <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-            <button type="submit" className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-              {file ? <Send className="h-5 w-5 text-blue-500" /> : <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />}
+            <button type="submit" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+              {file ? <Send className="h-6 w-6 text-blue-500" /> : <Search className="h-6 w-6 text-gray-400 dark:text-gray-500" />}
             </button>
           </div>
         </div>
