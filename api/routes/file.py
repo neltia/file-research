@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from db import get_db
-from services.file_service import save_file_metadata
+from api.db import get_db
+from api.services.file_service import save_file_metadata
 
 router = APIRouter()
 

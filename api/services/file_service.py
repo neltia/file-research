@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.sql import text
-from models import FileMetadata
+from api.models import FileMetadata
 
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -115,6 +115,7 @@ async def get_file_by_sha256(db: AsyncSession, sha256: str):
     result = await db.execute(select(FileMetadata).where(FileMetadata.sha256 == sha256))
     file = result.scalars().first()
 
-    if file is None or file.is_public:
+    if file is None:
         return None
+
     return file

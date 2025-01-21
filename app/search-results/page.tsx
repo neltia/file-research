@@ -1,121 +1,65 @@
-'use client'
+"use client"
 
-import { server } from '@/config'
-import { Search, Send, Upload } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
-import { Modal } from './Modal'
+import { server } from "@/config"
+import { useSearchParams } from "next/navigation"
+import { Suspense, useEffect, useState } from "react"
+import FileList from "../components/FileList"
+import SkeletonUI from "../components/SkeletonUI"
 
-export default function SearchUpload() {
-  const [query, setQuery] = useState('')
-  const [file, setFile] = useState<File | null>(null)
+interface FileInfo {
+  filename: string
+  sha256: string
+  filesize: number
+}
+
+function SearchResults() {
+  const [loading, setLoading] = useState(true)
+  const [files, setFiles] = useState<FileInfo[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isPublic, setIsPublic] = useState(true)
-  const router = useRouter()
+  const searchParams = useSearchParams()
+  const query = searchParams.get("query")
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setQuery(selectedFile.name);
-    }
-  };
-
-  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (query && !file) {
+  useEffect(() => {
+    const fetchResults = async () => {
       try {
-        console.log('Initiating search with query:', query);
-        const response = await fetch(`${server}/api/search?query=${encodeURIComponent(query)}`, {
-          method: 'GET',
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        let url = `${server}/api/file/list`
+        if (query) {
+          url += `?query=${encodeURIComponent(query)}`
         }
-        const data = await response.json();
-        console.log('Search response:', data);
-        router.push(`/search-results?query=${encodeURIComponent(query)}`);
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+        setFiles(data)
       } catch (error) {
-        console.error('Error during search:', error);
-        setError('An error occurred during search. Please try again.');
+        console.error("Error fetching results:", error)
+        setError("An error occurred while fetching search results. Please try again.")
+      } finally {
+        setLoading(false)
       }
-    } else if (file) {
-      setIsModalOpen(true);
     }
-  };
 
-  const handleUpload = async () => {
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('isPublic', isPublic.toString());
-      try {
-        const response = await fetch(`${server}/api/upload`, {
-          method: 'POST',
-          body: formData,
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log('Upload response:', data);
-        router.push(`/analysis/${data.file_id}`);
-      } catch (error) {
-        console.error('Error during file upload:', error);
-        setError('An error occurred during file upload. Please try again.');
-      }
-      setIsModalOpen(false);
-    }
-  };
+    fetchResults()
+  }, [query])
+
+  if (loading) return <SkeletonUI />
+  if (error) return <p className="text-center text-red-500">{error}</p>
+  if (files.length === 0) return <p className="text-center">No results found.</p>
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-6">
-      <form onSubmit={handleSearch} className="relative">
-        <div className="flex items-center w-full border border-gray-300 dark:border-gray-600 rounded-full overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 bg-white dark:bg-gray-800">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full px-4 py-3 focus:outline-none bg-transparent dark:text-white"
-            placeholder="Search or upload a file..."
-          />
-          <div className="flex items-center">
-            <label className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 p-2 transition-colors duration-200">
-              <Upload className="h-6 w-6 text-gray-400 dark:text-gray-500" />
-              <input
-                type="file"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </label>
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-            <button type="submit" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-              {file ? <Send className="h-6 w-6 text-blue-500" /> : <Search className="h-6 w-6 text-gray-400 dark:text-gray-500" />}
-            </button>
-          </div>
-        </div>
-      </form>
-      {error && (
-        <p className="mt-4 text-red-500 text-center">{error}</p>
-      )}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={() => { setIsPublic(false); handleUpload(); }}
-            className="px-4 py-2 text-base bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-          >
-            비공개
-          </button>
-          <button
-            onClick={() => { setIsPublic(true); handleUpload(); }}
-            className="px-4 py-2 text-base bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-          >
-            공개
-          </button>
-        </div>
-      </Modal>
+    <div className="container mx-auto px-4">
+      <h1 className="text-3xl font-bold text-center my-8">Search Results</h1>
+      <FileList files={files} />
     </div>
+  )
+}
+
+export default function SearchResultsPage() {
+  return (
+    <Suspense fallback={<SkeletonUI />}>
+      <SearchResults />
+    </Suspense>
   )
 }
 

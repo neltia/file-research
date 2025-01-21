@@ -1,8 +1,29 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import health, file, file_info
+from api.routes import health, file, file_info
 
-app = FastAPI()
+from contextlib import asynccontextmanager
+from api.db import async_engine, init_db
+
+
+# ✅ Lifespan 이벤트 핸들러 정의
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("FastAPI Server Start")
+
+    # 데이터베이스 초기화
+    await init_db()
+    print("DB conn connected")
+
+    yield  # 👈 FastAPI 실행
+
+    print("FastAPI Server terminated")
+    await async_engine.dispose()
+    print("DB conn closed")
+
+
+# fastapi app
+app = FastAPI(lifespan=lifespan)
 
 # CORS 설정
 app.add_middleware(
@@ -12,7 +33,7 @@ app.add_middleware(
         "http://localhost:8000",
         "https://analysis-file-neltias-projects.vercel.app",
         "https://dev-bloguide.vercel.app",
-        "https://bloguide.vercel.app"
+        "https://bloguide.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
