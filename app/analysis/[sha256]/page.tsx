@@ -1,7 +1,6 @@
 "use client"
 
 import SkeletonUI from "@/components/SkeletonUI"
-import { server } from "@/config"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -27,7 +26,7 @@ export default function AnalysisPage() {
   useEffect(() => {
     const fetchFileInfo = async () => {
       try {
-        const response = await fetch(`${server}/api/file/${sha256}`)
+        const response = await fetch(`/api/file/${sha256}`)
         if (response.status === 404) {
           setError(
             "The requested file could not be found in our system. Please check the file identifier and try again.",

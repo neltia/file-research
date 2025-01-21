@@ -1,6 +1,5 @@
 "use client"
 
-import { server } from "@/config"
 import { Search, Send, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type React from "react"
@@ -28,7 +27,7 @@ export default function SearchUpload() {
     if (query && !file) {
       try {
         console.log("Initiating search with query:", query)
-        const response = await fetch(`${server}/api/search?query=${encodeURIComponent(query)}`, {
+        const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`, {
           method: "GET",
         })
         if (!response.ok) {
@@ -52,7 +51,7 @@ export default function SearchUpload() {
       formData.append("file", file)
       formData.append("is_public", "true") // Always set to true
       try {
-        const response = await fetch(`${server}/api/upload`, {
+        const response = await fetch(`/api/upload`, {
           method: "POST",
           body: formData,
         })

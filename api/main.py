@@ -23,14 +23,14 @@ async def lifespan(app: FastAPI):
 
 
 # fastapi app
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, docs_url="/api/docs", openapi_url="/api/openapi.json")
 
 # CORS 설정
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:8000",
+        "http://127.0.0.1",
+        "http://localhost",
         "https://analysis-file-neltias-projects.vercel.app",
         "https://dev-bloguide.vercel.app",
         "https://bloguide.vercel.app",

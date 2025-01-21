@@ -1,6 +1,5 @@
 "use client"
 
-import { server } from "@/config"
 import { useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useState } from "react"
 import FileList from "../components/FileList"
@@ -22,7 +21,7 @@ function SearchResults() {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        let url = `${server}/api/file/list`
+        let url = `/api/file/list`
         if (query) {
           url += `?query=${encodeURIComponent(query)}`
         }
