@@ -25,9 +25,16 @@ async def get_db():
 # 데이터베이스 테이블이 존재하는지 확인하는 함수
 async def is_db_initialized():
     async with async_engine.begin() as conn:
-        inspector = inspect(conn)
-        tables = inspector.get_table_names()
-        return bool(tables)  # 테이블이 하나라도 있으면 True, 없으면 False
+        # run_sync를 사용해 동기 함수 래핑
+        table_names = await conn.run_sync(_check_tables_sync)
+        # 테이블이 하나라도 있으면 True
+        return bool(table_names)
+
+
+# sync_conn에 대해 inspector 사용
+def _check_tables_sync(sync_conn):
+    inspector = inspect(sync_conn)
+    return inspector.get_table_names()
 
 
 # 테이블 생성 함수

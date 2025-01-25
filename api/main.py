@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from api.db import async_engine, init_db
 
 
-# ✅ Lifespan 이벤트 핸들러 정의
+# Lifespan 이벤트 핸들러 정의
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("FastAPI Server Start")
@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     await init_db()
     print("DB conn connected")
 
-    yield  # 👈 FastAPI 실행
+    yield  # FastAPI 실행
 
     print("FastAPI Server terminated")
     await async_engine.dispose()
