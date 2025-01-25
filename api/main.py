@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from api.routes import health, file, file_info
 
 from contextlib import asynccontextmanager
@@ -28,22 +27,6 @@ app = FastAPI(
     docs_url="/api/docs",
     openapi_url="/api/openapi.json"
 )
-
-# CORS 설정
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1",
-        "http://localhost",
-        "https://analysis-file-neltias-projects.vercel.app",
-        "https://dev-bloguide.vercel.app",
-        "https://bloguide.vercel.app",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 
 # 라우트 등록
 app.include_router(health.router, prefix="/api")
