@@ -23,7 +23,11 @@ async def lifespan(app: FastAPI):
 
 
 # fastapi app
-app = FastAPI(lifespan=lifespan, docs_url="/api/docs", openapi_url="/api/openapi.json")
+app = FastAPI(
+    lifespan=lifespan,
+    docs_url="/api/docs",
+    openapi_url="/api/openapi.json"
+)
 
 # CORS 설정
 app.add_middleware(
