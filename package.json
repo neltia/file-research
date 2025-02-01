@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "fastapi-dev": "pip install -r requirements.txt && python run.py",
-    "fastapi-deploy": "pip3 install -r requirements.txt && python3 run.py",
+    "fastapi-deploy": "pip3 install -r requirements.txt && python3 -m uvicorn api.index:app --reload",
     "next-dev": "next dev",
     "local": "concurrently \"npm run next-dev\" \"npm run fastapi-dev\"",
     "dev": "concurrently \"npm run next-dev\" \"npm run fastapi-deploy\"",

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'bloguide demo',
+  title: 'anlay-pix',
   description: 'bloguide: blogger helper service demo. with v0',
   icons: {
     icon: "/favicon.ico"
