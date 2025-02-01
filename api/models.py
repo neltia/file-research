@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Integer, Float, TIMESTAMP, text
+from sqlalchemy import Column, String, Integer, Float, TIMESTAMP, text, Boolean
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -19,4 +19,5 @@ class FileMetadata(Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     file_metadata = Column(JSONB, nullable=True)  # EXIF 메타데이터 저장
+    is_public = Column(Boolean, default=False)  # 공개 여부 추가
     created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))

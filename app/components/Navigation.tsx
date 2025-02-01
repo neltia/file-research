@@ -22,7 +22,7 @@ export function Navigation() {
               />
             </Link>
             <Link href="/" className="text-xl font-semibold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-200">
-              Bloguide Demo
+              Anlay-Pix
             </Link>
           </div>
           <div className="flex items-center">
