@@ -80,9 +80,12 @@ export default function AnalysisPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-center mb-8">File Analysis</h1>
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-semibold mb-4">{fileInfo.filename}</h2>
+        <h2 className="text-2xl font-semibold mb-4 break-all">{fileInfo.sha256}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
+            <p>
+              <strong>Filename:</strong> {fileInfo.filename}
+            </p>
             <p>
               <strong>Size:</strong> {formatFileSize(fileInfo.filesize)}
             </p>
@@ -94,9 +97,6 @@ export default function AnalysisPage() {
             </p>
           </div>
           <div>
-            <p>
-              <strong>SHA256:</strong> {fileInfo.sha256}
-            </p>
             <p>
               <strong>MD5:</strong> {fileInfo.md5}
             </p>

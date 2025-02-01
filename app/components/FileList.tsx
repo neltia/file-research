@@ -20,7 +20,7 @@ export default function FileList({ files }: FileListProps) {
 
   return (
     <div className="w-full max-w-2xl mx-auto mt-6">
-      <h2 className="text-2xl font-bold mb-4">File List</h2>
+      <h2 className="text-2xl font-bold mb-4">최신 분석 결과</h2>
       <ul className="space-y-4">
         {files.map((file) => (
           <li key={file.sha256} className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
@@ -29,10 +29,11 @@ export default function FileList({ files }: FileListProps) {
               className="block hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
             >
               <div className="flex justify-between items-center">
-                <span className="font-medium">{file.filename}</span>
+                <span className="font-medium text-sm text-gray-500 dark:text-gray-400">SHA256:</span>
                 <span className="text-sm text-gray-500 dark:text-gray-400">{formatFileSize(file.filesize)}</span>
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">SHA256: {file.sha256}</div>
+              <div className="text-lg font-semibold mt-1 break-all">{file.sha256}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-2 truncate">파일명: {file.filename}</div>
             </Link>
           </li>
         ))}

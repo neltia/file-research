@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from api.routes import health, file, file_info
 
 from contextlib import asynccontextmanager
-from api.db import async_engine, init_db
+from api.db import engine, init_db
 
 
 # Lifespan 이벤트 핸들러 정의
@@ -11,13 +11,13 @@ async def lifespan(app: FastAPI):
     print("FastAPI Server Start")
 
     # 데이터베이스 초기화
-    await init_db()
+    init_db()
     print("DB conn connected")
 
     yield  # FastAPI 실행
 
     print("FastAPI Server terminated")
-    await async_engine.dispose()
+    engine.dispose()
     print("DB conn closed")
 
 

@@ -34,11 +34,10 @@ cd file-research
 ### Local Installation
 - Backend (FastAPI)
 ```
-cd api
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn api.index:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 - Frontend (Next.js)
