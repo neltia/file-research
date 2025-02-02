@@ -78,7 +78,8 @@ function SearchResults() {
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
         <Navigation />
         <main className="container mx-auto px-4 pt-12">
-          <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-white mb-8">Search Results</h1>
+          <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-white mb-4">Search Results</h1>
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8">Showing files matching your search query.</p>
           {loading ? (
             <SkeletonUI />
           ) : error ? (
@@ -88,7 +89,7 @@ function SearchResults() {
           ) : files.length === 0 ? (
             <p className="text-center text-gray-600 dark:text-gray-400">No results found.</p>
           ) : (
-            <FileList files={files} />
+            <FileList files={files} context="search" />
           )}
         </main>
       </div>

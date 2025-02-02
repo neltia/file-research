@@ -55,7 +55,7 @@ function RecentFiles() {
           ) : files.length === 0 ? (
             <p className="text-center text-gray-600 dark:text-gray-400">No recent files found.</p>
           ) : (
-            <FileList files={files} />
+            <FileList files={files} context="recent" />
           )}
         </main>
       </div>
