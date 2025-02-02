@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.future import select
 from sqlalchemy.sql import text
 from api.models import FileMetadata
+from typing import Optional, List
 
 import io
 from PIL import Image
@@ -95,13 +96,57 @@ def save_file_metadata(db: Session, filename: str, content: bytes, is_public: bo
 
 # 파일 전체 리스트: 공개된 파일 목록만 반환
 def get_file_list(db: Session, include_private: bool = False):
-    if include_private:
-        result = db.execute(select(FileMetadata))
-    else:
-        result = db.execute(select(FileMetadata).where(FileMetadata.is_public == True))
+    query = select(FileMetadata).order_by(FileMetadata.created_at.desc()).limit(20)
+    if not include_private:
+        query = query.where(FileMetadata.is_public == True)
 
+    result = db.execute(query)
     files = result.scalars().all()
     return [{"filename": f.filename, "sha256": f.sha256, "filesize": f.filesize} for f in files]
+
+
+# 파일 업로드 결과 검색
+def search_files_service(
+    db: Session,
+    filename: Optional[str],
+    sha256: Optional[str],
+    md5: Optional[str],
+    sha1: Optional[str],
+    extension: Optional[str],
+    is_public: Optional[bool]
+) -> List[dict]:
+    query = db.query(FileMetadata)
+
+    if filename:
+        query = query.filter(FileMetadata.filename.ilike(filename))
+    if sha256:
+        query = query.filter(FileMetadata.sha256 == sha256)
+    if md5:
+        query = query.filter(FileMetadata.md5 == md5)
+    if sha1:
+        query = query.filter(FileMetadata.sha1 == sha1)
+    if extension:
+        query = query.filter(FileMetadata.extension == extension)
+    if is_public is not None:
+        query = query.filter(FileMetadata.is_public == is_public)
+
+    results = query.all()
+
+    return [
+        {
+            "filename": file.filename,
+            "filesize": file.filesize,
+            "extension": file.extension,
+            "sha256": file.sha256,
+            "md5": file.md5,
+            "sha1": file.sha1,
+            "latitude": file.latitude,
+            "longitude": file.longitude,
+            "is_public": file.is_public,
+            "created_at": file.created_at
+        }
+        for file in results
+    ]
 
 
 # SHA256을 기준으로 파일 정보 조회
