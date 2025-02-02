@@ -8,9 +8,10 @@ interface FileInfo {
 
 interface FileListProps {
   files: FileInfo[]
+  context: "recent" | "search"
 }
 
-export default function FileList({ files }: FileListProps) {
+export default function FileList({ files, context }: FileListProps) {
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return bytes + " bytes"
     else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + " KB"
@@ -20,7 +21,7 @@ export default function FileList({ files }: FileListProps) {
 
   return (
     <div className="w-full max-w-2xl mx-auto mt-6">
-      <h2 className="text-2xl font-bold mb-4">최신 분석 결과</h2>
+      <h2 className="text-2xl font-bold mb-4">{context === "recent" ? "Recent Files" : "Search Results"}</h2>
       <ul className="space-y-4">
         {files.map((file) => (
           <li key={file.sha256} className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">

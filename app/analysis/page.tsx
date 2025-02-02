@@ -1,7 +1,7 @@
 'use client'
 
-import AnalysisResult from '@/components/AnalysisResult';
-import SkeletonUI from '@/components/SkeletonUI';
+import AnalysisResult from '@/app/components/AnalysisResult';
+import SkeletonUI from '@/app/components/SkeletonUI';
 import { useEffect, useState } from 'react';
 
 interface AnalysisResultData {

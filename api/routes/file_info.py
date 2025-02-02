@@ -10,8 +10,8 @@ router = APIRouter()
 SHA256_PATTERN = re.compile(r"^[a-fA-F0-9]{64}$")
 
 
-@router.get("/file/list")
-def get_file_list(
+@router.get("/file/recent")
+def recent_file_list(
     include_private: bool = Query(False, description="Set to true to include private files"),
     db: Session = Depends(get_db)
 ):

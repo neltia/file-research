@@ -4,6 +4,7 @@ import { Search, Send, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type React from "react"
 import { useState } from "react"
+import { AlertModal } from "./AlertModal"
 import { Modal } from "./Modal"
 
 export default function SearchUpload() {
@@ -11,7 +12,8 @@ export default function SearchUpload() {
   const [file, setFile] = useState<File | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isPublic, setIsPublic] = useState(true)
+  const [isAlertOpen, setIsAlertOpen] = useState(false)
+  const [alertMessage, setAlertMessage] = useState("")
   const router = useRouter()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,20 +24,58 @@ export default function SearchUpload() {
     }
   }
 
+  const determineSearchType = (query: string): { param: string; value: string } | null => {
+    // SHA256 (64 characters)
+    if (/^[a-fA-F0-9]{64}$/.test(query)) {
+      return { param: "sha256", value: query }
+    }
+    // MD5 (32 characters)
+    if (/^[a-fA-F0-9]{32}$/.test(query)) {
+      return { param: "md5", value: query }
+    }
+    // SHA1 (40 characters)
+    if (/^[a-fA-F0-9]{40}$/.test(query)) {
+      return { param: "sha1", value: query }
+    }
+    // Extension (starts with dot, 1-10 characters)
+    if (/^\.[a-zA-Z0-9]{1,9}$/.test(query)) {
+      return { param: "extension", value: query.substring(1) }
+    }
+    // Filename (1-255 characters)
+    if (query.length >= 1 && query.length <= 255) {
+      return { param: "filename", value: query }
+    }
+    return null
+  }
+
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (query && !file) {
       try {
         console.log("Initiating search with query:", query)
-        const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`, {
-          method: "GET",
-        })
+        const searchType = determineSearchType(query)
+
+        if (!searchType) {
+          setAlertMessage("Invalid search query. Please check your input.")
+          setIsAlertOpen(true)
+          return
+        }
+
+        // First, try to fetch the results
+        const response = await fetch(`/api/search?${searchType.param}=${encodeURIComponent(searchType.value)}`)
+
+        if (response.status === 404) {
+          setAlertMessage("No results found for your search.")
+          setIsAlertOpen(true)
+          return
+        }
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
-        const data = await response.json()
-        console.log("Search response:", data)
-        router.push(`/search-results?query=${encodeURIComponent(query)}`)
+
+        // If successful, navigate to search results
+        router.push(`/search-results?${searchType.param}=${encodeURIComponent(searchType.value)}`)
       } catch (error) {
         console.error("Error during search:", error)
         setError("An error occurred during search. Please try again.")
@@ -49,12 +89,19 @@ export default function SearchUpload() {
     if (file) {
       const formData = new FormData()
       formData.append("file", file)
-      formData.append("is_public", "true") // Always set to true
+      formData.append("is_public", "true")
       try {
         const response = await fetch(`/api/upload`, {
           method: "POST",
           body: formData,
         })
+        if (response.status === 400) {
+          console.log("Received 400 status, showing alert")
+          setAlertMessage("Unsupported file type. Please upload a different file.")
+          setIsAlertOpen(true)
+          setIsModalOpen(false)
+          return
+        }
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
@@ -82,7 +129,7 @@ export default function SearchUpload() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full px-4 py-3 focus:outline-none bg-transparent dark:text-white"
-            placeholder="Search or upload a file..."
+            placeholder="Search by filename, hash, or extension..."
           />
           <div className="flex items-center">
             <label className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 p-2 transition-colors duration-200">
@@ -111,10 +158,7 @@ export default function SearchUpload() {
           </p>
           <div className="flex justify-center">
             <button
-              onClick={() => {
-                setIsPublic(true)
-                handleUpload()
-              }}
+              onClick={handleUpload}
               className="px-4 py-2 text-base bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             >
               업로드
@@ -122,6 +166,7 @@ export default function SearchUpload() {
           </div>
         </div>
       </Modal>
+      <AlertModal isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} message={alertMessage} />
     </div>
   )
 }
